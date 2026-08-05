@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAICA AI Chat</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <style>
+        .sos-btn {
+            background-color: #ff4d4d !important;
+            color: white !important;
+            font-weight: bold;
+            border: none;
+            padding: 10px;
+            width: 90%;
+            margin: 15px auto;
+            display: block;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .sos-btn:hover {
+            background-color: #ff1a1a !important;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="sidebar">
+    <h2>GAICA</h2>
+    <ul>
+        <li><a href="/dashboard">🏠 Dashboard</a></li>
+        <li><a href="/chatbot">🤖 AI Chat</a></li>
+        <li><a href="/scam">🛡 Scam Detection</a></li>
+        <li><a href="/fake-news">📰 Fake News</a></li>
+        <li><a href="/emergency">🚨 Emergency</a></li>
+        <li><a href="/logout">🚪 Logout</a></li>
+    </ul>
+    <button id="sosBtn" class="sos-btn">🚨 SOS EMERGENCY</button>
+</div>
+
+<div class="main-content">
+
+    <h1>🤖 GAICA AI Chat Assistant</h1>
+    <p>Hello! I am your AI Crisis Assistant. Ask me anything related to disasters, cyber scams, fake news, or emergencies.</p>
+    <hr>
+
+    <form id="chatForm">
+        <textarea id="question" rows="6" cols="80" placeholder="Type your question here..." required></textarea>
+        <br><br>
+        <button type="submit">Send</button>
+    </form>
+
+    <br>
+
+    <div id="chatBox" class="chat-box"></div>
+
+    <br>
+
+    <a href="/dashboard"><button>Back to Dashboard</button></a>
+
+</div>
+
+<script>
+// --- AI Chat Handler ---
+document.getElementById("chatForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const questionBox = document.getElementById("question");
+    const message = questionBox.value.trim();
+    if (!message) return;
+
+    const chatBox = document.getElementById("chatBox");
+    chatBox.innerHTML += `<p><b>You:</b> ${message}</p>`;
+    questionBox.value = "";
+
+    try {
+        const response = await fetch("/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: message })
+        });
+
+        const data = await response.json();
+
+        if (data.status === "success") {
+            chatBox.innerHTML += `<p><b>🤖 GAICA:</b> ${data.reply}</p>`;
+        } else {
+            chatBox.innerHTML += `<p style="color:red;"><b>Error:</b> ${data.reply}</p>`;
+        }
+    } catch (err) {
+        chatBox.innerHTML += `<p style="color:red;">Failed to get response from server.</p>`;
+    }
+});
+
+// --- SOS Live Location Feature ---
+document.getElementById('sosBtn').addEventListener('click', () => {
+    if (confirm("Are you sure you want to send an emergency alert with your live location?")) {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                const mapLink = `https://www.google.com/maps?q=${lat},${lon}`;
+
+                try {
+                    const response = await fetch('/send-sos', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ location_url: mapLink })
+                    });
+                    const data = await response.json();
+                    alert("🚨 Success: Emergency alert and live location sent to contacts!");
+                } catch (err) {
+                    alert("Failed to connect to server. Alert not sent.");
+                }
+            }, () => {
+                alert("Location access denied. Please enable location services in your browser.");
+            });
+        } else {
+            alert("Your browser does not support location tracking.");
+        }
+    }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAICA - Emergency Assistance</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <!-- Markdown Parser -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- DOMPurify for XSS Protection -->
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+</head>
+
+<body>
+
+<div class="sidebar">
+    <h2>GAICA</h2>
+    <ul>
+        <li><a href="/dashboard">🏠 Dashboard</a></li>
+        <li><a href="/chatbot">🤖 AI Chat</a></li>
+        <li><a href="/scam">🛡 Scam Detection</a></li>
+        <li><a href="/fake-news">📰 Fake News</a></li>
+        <li><a href="/emergency">🚨 Emergency</a></li>
+        <li><a href="/logout">🚪 Logout</a></li>
+    </ul>
+</div>
+
+<div class="main">
+
+    <h1>🚨 Emergency Assistance</h1>
+    <hr>
+
+    <p>
+        Select the type of emergency or enter your emergency details.
+        GAICA AI will provide immediate guidance and safety recommendations.
+    </p>
+
+    <form id="emergencyForm">
+        <div style="margin-bottom: 15px;">
+            <label for="emergency_type" style="font-weight: bold; display: block; margin-bottom: 5px;">Select Emergency Type</label>
+            <select name="emergency_type" id="emergency_type" required style="width: 100%; max-width: 400px; padding: 8px;">
+                <option value="">-- Select Emergency --</option>
+                <option>Flood</option>
+                <option>Earthquake</option>
+                <option>Fire</option>
+                <option>Cyclone</option>
+                <option>Landslide</option>
+                <option>Health Emergency</option>
+                <option>Cyber Attack</option>
+                <option>Road Accident</option>
+                <option>Other</option>
+            </select>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label for="message" style="font-weight: bold; display: block; margin-bottom: 5px;">Describe Your Emergency</label>
+            <textarea id="message" rows="6" style="width: 100%; max-width: 600px; padding: 8px;"
+                      placeholder="Describe your emergency here..." required></textarea>
+        </div>
+
+        <button type="submit" id="submitBtn" style="padding: 10px 20px; font-weight: bold; cursor: pointer;">Get AI Guidance</button>
+    </form>
+
+    <div class="result" style="margin-top: 30px;">
+        <h2>Emergency Response</h2>
+        <div id="analysisResult" class="result-box" style="padding: 15px; border: 1px solid #ccc; border-radius: 5px; background: #f9f9f9;">
+            <p style="color: #666;">AI emergency guidance will appear here after submission.</p>
+        </div>
+    </div>
+
+    <div style="margin-top: 30px;">
+        <h3>Important Emergency Numbers</h3>
+        <table class="emergency-table" style="width: 100%; max-width: 400px; border-collapse: collapse; text-align: left;">
+            <thead>
+                <tr style="background-color: #f2f2f2;">
+                    <th style="border: 1px solid #ddd; padding: 10px;">Service</th>
+                    <th style="border: 1px solid #ddd; padding: 10px;">Number</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="border: 1px solid #ddd; padding: 10px;">Police</td>
+                    <td style="border: 1px solid #ddd; padding: 10px; font-weight: bold; color: #d9534f;">112</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #ddd; padding: 10px;">Ambulance</td>
+                    <td style="border: 1px solid #ddd; padding: 10px; font-weight: bold; color: #d9534f;">108</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #ddd; padding: 10px;">Fire Brigade</td>
+                    <td style="border: 1px solid #ddd; padding: 10px; font-weight: bold; color: #d9534f;">101</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #ddd; padding: 10px;">Women Helpline</td>
+                    <td style="border: 1px solid #ddd; padding: 10px; font-weight: bold; color: #d9534f;">1091</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #ddd; padding: 10px;">Disaster Management</td>
+                    <td style="border: 1px solid #ddd; padding: 10px; font-weight: bold; color: #d9534f;">1078</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 20px;">
+        <a href="/dashboard" class="btn">Back to Dashboard</a>
+    </div>
+
+</div>
+
+<script>
+document.getElementById("emergencyForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const submitBtn = document.getElementById("submitBtn");
+    const resultDiv = document.getElementById("analysisResult");
+
+    const emergencyType = document.getElementById("emergency_type").value;
+    const message = document.getElementById("message").value.trim();
+
+    if (!emergencyType || !message) return;
+
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Getting Guidance...";
+    resultDiv.innerHTML = `<p style="color:#0056b3; font-weight:bold;">🚨 GAICA AI is preparing emergency guidance. Please wait...</p>`;
+
+    resultDiv.scrollIntoView({ behavior: 'smooth' });
+
+    try {
+        const response = await fetch("/emergency", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ emergency_type: emergencyType, message: message })
+        });
+
+        const data = await response.json();
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Get AI Guidance";
+
+        if (data.status === "success") {
+            const rawMarkdown = marked.parse(data.ai_analysis);
+            const cleanHTML = DOMPurify.sanitize(rawMarkdown);
+            resultDiv.innerHTML = `<div style="color:#111; line-height: 1.6;">${cleanHTML}</div>`;
+        } else {
+            resultDiv.innerHTML = `<p style="color:red; font-weight:bold;">Error: ${data.message}</p>`;
+        }
+    } catch (err) {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Get AI Guidance";
+        resultDiv.innerHTML = `<p style="color:red; font-weight:bold;">Failed to connect to the server.</p>`;
+    }
+});
+</script>
+
+</body>
+</html>

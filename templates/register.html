@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAICA - Register</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="left-panel">
+        <h1>GAICA</h1>
+        <p>Global Agentic AI Crisis Assistant</p>
+    </div>
+
+    <div class="login-box">
+
+        <h1>Register</h1>
+        <p>Create Your Account</p>
+        <hr>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <p style="color: {{ 'green' if category == 'success' else ('blue' if category == 'info' else 'red') }}; font-weight: bold;">
+                        {{ message }}
+                    </p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="/register" method="POST">
+
+            <label>Full Name</label>
+            <input type="text"
+                   name="fullname"
+                   placeholder="Enter Full Name"
+                   required>
+
+            <label>Email</label>
+            <input type="email"
+                   name="email"
+                   placeholder="Enter Email"
+                   required>
+
+            <label>Mobile Number</label>
+            <input type="text"
+                   name="mobile"
+                   placeholder="Enter Mobile Number"
+                   required>
+
+            <label>Password</label>
+            <input type="password"
+                   name="password"
+                   placeholder="Create Password"
+                   required>
+
+            <label>Confirm Password</label>
+            <input type="password"
+                   name="confirm_password"
+                   placeholder="Confirm Password"
+                   required>
+
+            <button type="submit">
+                Register
+            </button>
+
+        </form>
+
+        <br>
+
+        <p>
+            Already have an account?
+            <a href="/login">Login Here</a>
+        </p>
+
+        <br>
+
+        <a href="/">⬅ Back to Home</a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

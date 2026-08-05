@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAICA - Fake News Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+
+<body>
+
+<div class="sidebar">
+    <h2>GAICA</h2>
+    <ul>
+        <li><a href="/dashboard">🏠 Dashboard</a></li>
+        <li><a href="/chatbot">🤖 AI Chat</a></li>
+        <li><a href="/scam">🛡 Scam Detection</a></li>
+        <li><a href="/fake-news">📰 Fake News</a></li>
+        <li><a href="/emergency">🚨 Emergency</a></li>
+        <li><a href="/logout">🚪 Logout</a></li>
+    </ul>
+</div>
+
+<div class="main">
+
+    <h1>📰 Fake News Detection</h1>
+    <hr>
+
+    <p>
+        Paste any news article, social media post, or message below.
+        GAICA AI will analyze whether the content appears reliable or suspicious.
+    </p>
+
+    <form id="fakeNewsForm">
+        <textarea id="newsText" name="news_text" rows="10" cols="80"
+                  placeholder="Paste news or message here..." required></textarea>
+        <br><br>
+        <button type="submit" id="submitBtn">Analyze News</button>
+    </form>
+
+    <br>
+
+    <div class="result">
+        <h2>Analysis Result</h2>
+        <div id="analysisResult" class="result-box">
+            <p style="color: #666;">AI analysis result will appear here after submission.</p>
+        </div>
+    </div>
+
+    <br>
+
+    <a href="/dashboard" class="btn">Back to Dashboard</a>
+
+</div>
+
+<script>
+document.getElementById("fakeNewsForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const submitBtn = document.getElementById("submitBtn");
+    const resultDiv = document.getElementById("analysisResult");
+    const newsText = document.getElementById("newsText").value.trim();
+
+    if (!newsText) return;
+
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Analyzing...";
+    resultDiv.innerHTML = `<p style="color:#0056b3; font-weight:bold;">🤖 GAICA AI is analyzing the content. Please wait...</p>`;
+
+    try {
+        const response = await fetch("/fake-news", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ news_text: newsText })
+        });
+
+        const data = await response.json();
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Analyze News";
+
+        if (data.status === "success") {
+            const renderedMarkdown = marked.parse(data.ai_analysis);
+            resultDiv.innerHTML = `<div style="color:#111;">${renderedMarkdown}</div>`;
+        } else {
+            resultDiv.innerHTML = `<p style="color:red; font-weight:bold;">Error: ${data.message}</p>`;
+        }
+    } catch (err) {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Analyze News";
+        resultDiv.innerHTML = `<p style="color:red; font-weight:bold;">Failed to connect to the server.</p>`;
+    }
+});
+</script>
+
+</body>
+</html>

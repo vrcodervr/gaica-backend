@@ -1,0 +1,192 @@
+/* ==========================
+   GAICA Login / Register
+========================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 50%, #0f172a 100%);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:30px;
+}
+
+.login-box{
+    width:100%;
+    max-width:500px;
+    background: #ffffff;
+    padding:40px;
+    border-radius:18px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+    animation: fadeUp 0.5s ease;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-box h1{
+    text-align:center;
+    background: linear-gradient(135deg, #2563eb, #38bdf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom:8px;
+    font-size:42px;
+    font-weight: 800;
+}
+
+.login-box h3{
+    text-align:center;
+    color:#64748b;
+    margin-bottom:20px;
+    font-weight: 500;
+}
+
+.login-box hr{
+    border: none;
+    border-top: 1px solid #e2e8f0;
+    margin-bottom:25px;
+}
+
+label{
+    display:block;
+    font-weight:600;
+    margin-bottom:6px;
+    color:#334155;
+    font-size: 14px;
+}
+
+input{
+    width:100%;
+    padding:13px 14px;
+    border:1.5px solid #e2e8f0;
+    border-radius:10px;
+    margin-bottom:18px;
+    font-size:15px;
+    transition: all 0.2s ease;
+    background: #f8fafc;
+}
+
+input:focus{
+    border-color:#2563eb;
+    outline:none;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+}
+
+button{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:10px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color:#fff;
+    font-size:16px;
+    font-weight: 600;
+    cursor:pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 6px 16px rgba(37,99,235,0.3);
+}
+
+button:hover{
+    background: linear-gradient(135deg, #1d4ed8, #1e40af);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(37,99,235,0.4);
+}
+
+button:active{
+    transform: translateY(0);
+}
+
+p{
+    text-align:center;
+    margin-top:20px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+a{
+    color:#2563eb;
+    text-decoration:none;
+    font-weight:600;
+}
+
+a:hover{
+    text-decoration:underline;
+}
+
+.back-home{
+    text-align:center;
+    margin-top:20px;
+}
+
+.back-home a{
+    display:inline-block;
+    color: #64748b;
+    font-weight: 500;
+}
+
+/* Flash messages */
+.flash-success{
+    color: #16a34a;
+    background: #f0fdf4;
+    border-left: 4px solid #22c55e;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.flash-danger{
+    color: #dc2626;
+    background: #fef2f2;
+    border-left: 4px solid #ef4444;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.flash-info{
+    color: #2563eb;
+    background: #eff6ff;
+    border-left: 4px solid #3b82f6;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+@media(max-width:600px){
+
+    body{
+        padding:15px;
+    }
+
+    .login-box{
+        max-width:100%;
+        padding:25px;
+    }
+
+    .login-box h1{
+        font-size:32px;
+    }
+}

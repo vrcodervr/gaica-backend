@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>GAICA Dashboard</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <h2>GAICA</h2>
+
+    <ul>
+
+        <li><a href="/dashboard">🏠 Dashboard</a></li>
+
+        <li><a href="/chatbot">🤖 AI Chat</a></li>
+
+        <li><a href="/scam">🛡 Scam Detection</a></li>
+
+        <li><a href="/fake-news">📰 Fake News</a></li>
+
+        <li><a href="/emergency">🚨 Emergency</a></li>
+
+        {% if session.get('is_admin') %}
+        <li><a href="/admin">🛠️ Admin Panel</a></li>
+        {% endif %}
+
+        <li><a href="/logout">🚪 Logout</a></li>
+
+    </ul>
+
+</div>
+
+
+<div class="main">
+
+    <div class="header">
+
+        <h1>Welcome, {{ session.get('user', 'User') }}! 👋</h1>
+
+        <p>Global Agentic AI Crisis Assistant Dashboard</p>
+
+    </div>
+
+    <hr>
+
+    <div class="cards">
+
+        <div class="card">
+
+            <h2>🤖 AI Chat</h2>
+
+            <p>Ask any crisis related question.</p>
+
+            <a href="/chatbot" class="btn">Open</a>
+
+        </div>
+
+        <div class="card">
+
+            <h2>🛡 Scam Detection</h2>
+
+            <p>Detect online scams using AI.</p>
+
+            <a href="/scam" class="btn">Open</a>
+
+        </div>
+
+        <div class="card">
+
+            <h2>📰 Fake News</h2>
+
+            <p>Verify suspicious news.</p>
+
+            <a href="/fake-news" class="btn">Open</a>
+
+        </div>
+
+        <div class="card">
+
+            <h2>🚨 Emergency</h2>
+
+            <p>View emergency guidance.</p>
+
+            <a href="/emergency" class="btn">Open</a>
+
+        </div>
+
+    </div>
+
+    <br>
+
+    <div class="info">
+
+        <h2>About GAICA</h2>
+
+        <p>
+
+            GAICA is an AI-powered platform that helps users during
+            disasters, cyber scams, fake news, and emergency situations.
+            It provides intelligent guidance using Artificial Intelligence.
+
+        </p>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

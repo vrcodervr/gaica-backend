@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAICA - Scam Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+    <!-- Correct Marked.js CDN link to parse AI Markdown response safely -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+        .result-box {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            background-color: #fcfcfc;
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .form-group select, .form-group input, .form-group textarea {
+            width: 100%;
+            max-width: 600px;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        .btn-submit {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-submit:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>GAICA</h2>
+        <ul>
+            <li><a href="/dashboard">🏠 Dashboard</a></li>
+            <li><a href="/chatbot">🤖 AI Chat</a></li>
+            <li><a href="/scam">🛡 Scam Detection</a></li>
+            <li><a href="/fake-news">📰 Fake News</a></li>
+            <li><a href="/emergency">🚨 Emergency</a></li>
+            <li><a href="/logout">🚪 Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="main" style="padding: 20px; margin-left: 260px;">
+        <h1>🛡 Scam Detection</h1>
+        <hr>
+        <p>
+            Provide any suspicious SMS, Email, WhatsApp message, or URL link below. GAICA Agentic AI will instantly analyze whether it is a potential scam.
+        </p>
+
+        <form id="scamForm">
+            <div class="form-group">
+                <label for="scamType">Select Type (Optional):</label>
+                <select id="scamType">
+                    <option value="Unspecified">Not Sure / Other</option>
+                    <option value="SMS / WhatsApp">Suspicious Message (SMS/WhatsApp)</option>
+                    <option value="Email">Phishing Email</option>
+                    <option value="Website Link">Suspicious URL / Website</option>
+                    <option value="Call">Fraudulent Phone Call</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="scamDescription">Paste Suspicious Content or URL here:</label>
+                <textarea id="scamDescription" rows="6" placeholder="Paste full text, link, or details here..." required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="scamLocation">Your Location / Region (Optional):</label>
+                <input type="text" id="scamLocation" placeholder="e.g., India, New York, etc.">
+            </div>
+            <button type="submit" class="btn-submit" id="submitBtn">Analyze Scam</button>
+        </form>
+
+        <br>
+        <div class="result">
+            <h2>Analysis Result</h2>
+            <div id="analysisResult" class="result-box">
+                <p style="color: #666;">AI analysis will appear here instantly after form submission.</p>
+            </div>
+        </div>
+
+        <br><br>
+        <a href="/dashboard">
+            <button type="button" style="background-color:#6c757d; color:white; padding:8px 15px; border:none; border-radius:4px; cursor:pointer;">Back to Dashboard</button>
+        </a>
+    </div>
+
+    <script>
+        document.getElementById("scamForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById("submitBtn");
+            const resultDiv = document.getElementById("analysisResult");
+
+            const scamType = document.getElementById("scamType").value;
+            const description = document.getElementById("scamDescription").value.trim();
+            const scamLocation = document.getElementById("scamLocation").value.trim();
+
+            if (!description) return;
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Analyzing Content...";
+            resultDiv.innerHTML = `<p style="color: #0056b3; font-weight:bold;">🤖 GAICA AI is scanning the payload parameters. Please wait...</p>`;
+
+            try {
+                const response = await fetch("/report-scam", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        type: scamType,
+                        description: description,
+                        location: scamLocation
+                    })
+                });
+
+                const data = await response.json();
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Analyze Scam";
+
+                if (data.status === "success") {
+                    const renderedMarkdown = marked.parse(data.ai_analysis);
+                    resultDiv.innerHTML = `<div style="color:#111;">${renderedMarkdown}</div>`;
+                } else {
+                    resultDiv.innerHTML = `<p style="color:red; font-weight:bold;">Error: ${data.message}</p>`;
+                }
+            } catch (err) {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Analyze Scam";
+                resultDiv.innerHTML = `<p style="color:red; font-weight:bold;">Failed to connect to the remote application server core.</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
